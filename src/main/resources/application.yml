@@ -1,0 +1,15 @@
+server.port: 8080
+spring:
+  application:
+    name: spring_security
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/spring_security
+    username: postgres
+    password: root
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
