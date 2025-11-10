@@ -1,5 +1,10 @@
 server.port: 8080
 spring:
+#  security:
+#    user:
+#      name: user
+#      password: 1111
+#      roles: USER
   application:
     name: spring_security
   datasource:
