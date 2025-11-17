@@ -22,28 +22,39 @@ import java.io.IOException;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+    //formLogin
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+//                //.formLogin(Customizer.withDefaults());  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
+//                .formLogin(form -> form
+//                        .loginPage("/loginPage")
+//                        .loginProcessingUrl("/loginProc")
+//                        .defaultSuccessUrl("/", false)
+//                        .failureUrl("/failed")
+//                        .usernameParameter("username")
+//                        .passwordParameter("password")
+//                        .successHandler((request, response, authentication) -> {
+//                            System.out.println("authentication success : " + authentication);
+//                            response.sendRedirect("/home");
+//                        })
+//                        .failureHandler((request, response, exception) -> {
+//                            System.out.println("authentication failure : " + exception);
+//                            response.sendRedirect("/login");
+//                        })
+//                        .permitAll()
+//                );
+//
+//        return http.build();
+//    }
+
+    //httpBasic
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults());  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
-                .formLogin(form -> form
-                        .loginPage("/loginPage")
-                        .loginProcessingUrl("/loginProc")
-                        .defaultSuccessUrl("/", false)
-                        .failureUrl("/failed")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler((request, response, authentication) -> {
-                            System.out.println("authentication success : " + authentication);
-                            response.sendRedirect("/home");
-                        })
-                        .failureHandler((request, response, exception) -> {
-                            System.out.println("authentication failure : " + exception);
-                            response.sendRedirect("/login");
-                        })
-                        .permitAll()
-                );
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
