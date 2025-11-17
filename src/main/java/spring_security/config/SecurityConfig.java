@@ -16,6 +16,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -61,13 +63,34 @@ public class SecurityConfig {
 //    }
 
     //httpBasic - customized
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+//                .httpBasic(basic ->
+//                        //인증실패시
+//                        basic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+//
+//        return http.build();
+//    }
+
+    //formLogin + rememberMe
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .httpBasic(basic ->
-                        //인증실패시
-                        basic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+                .formLogin(Customizer.withDefaults())  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
+                .rememberMe(rememberMe ->
+                    rememberMe
+                            .alwaysRemember(true)
+                            .tokenValiditySeconds(3600)
+                            .userDetailsService(userDetailsService())
+                            //.rememberMeServices(rememberMeServices(userDetailsService()))
+                            .rememberMeParameter("remember")
+                            //.rememberMeCookieDomain("remember")
+                            .key("security")
+                )
+        ;
 
         return http.build();
     }
@@ -81,4 +104,13 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(user);
     }
+
+//    @Bean
+//    public RememberMeServices rememberMeServices(UserDetailsService userDetailsService) {
+//        TokenBasedRememberMeServices services =
+//                new TokenBasedRememberMeServices("security", userDetailsService);
+//        services.setCookieName("remember");
+//        services.setTokenValiditySeconds(3600);
+//        return services;
+//    }
 }
