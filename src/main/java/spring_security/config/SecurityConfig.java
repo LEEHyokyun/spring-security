@@ -16,6 +16,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
 
@@ -50,11 +51,23 @@ public class SecurityConfig {
 //    }
 
     //httpBasic
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+//                .httpBasic(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
+
+    //httpBasic - customized
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(basic ->
+                        //인증실패시
+                        basic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
         return http.build();
     }
