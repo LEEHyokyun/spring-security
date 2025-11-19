@@ -75,22 +75,46 @@ public class SecurityConfig {
 //    }
 
     //formLogin + rememberMe
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
+//                .rememberMe(rememberMe ->
+//                    rememberMe
+//                            .alwaysRemember(true)
+//                            .tokenValiditySeconds(3600)
+//                            .userDetailsService(userDetailsService())
+//                            //.rememberMeServices(rememberMeServices(userDetailsService()))
+//                            .rememberMeParameter("remember")
+//                            //.rememberMeCookieDomain("remember")
+//                            .key("security")
+//                )
+//        ;
+//
+//        return http.build();
+//    }
+
+    //anonymous
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
-                .rememberMe(rememberMe ->
-                    rememberMe
-                            .alwaysRemember(true)
-                            .tokenValiditySeconds(3600)
-                            .userDetailsService(userDetailsService())
-                            //.rememberMeServices(rememberMeServices(userDetailsService()))
-                            .rememberMeParameter("remember")
-                            //.rememberMeCookieDomain("remember")
-                            .key("security")
-                )
-        ;
+                .authorizeHttpRequests(authorizeRequests ->
+                        //authorizeRequests.anyRequest().authenticated()      //모든 요청은 인증을 필요로 한다.
+                        authorizeRequests
+                                .requestMatchers("/anonymous").hasRole("GUEST") //이 URL은 GUEST 역할이 필요하다.(role - guest = role_guest)
+                                .requestMatchers("/anonymousContext", "/authentication").permitAll() //이 URL은 모든 사용자가 접근 가능하다.
+                                .anyRequest().authenticated() //이외 나머지 요청은 인증이 필요하다.
+                            )
+                .formLogin(Customizer.withDefaults())
+                /*
+                * 인증되지 않은 사용자가 접근하면 SecurityContext에 익명 Authentication을 넣어라
+                * */
+                .anonymous(anonymous
+                        -> anonymous
+                        .principal("guest")
+                        .authorities("ROLE_GUEST") //prefix
+                );
 
         return http.build();
     }

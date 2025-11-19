@@ -1,5 +1,9 @@
 package spring_security;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +45,28 @@ public class IndexController {
     @GetMapping("/loginPage")
     public String loginPage() {
         return "loginPage";
+    }
+
+    @GetMapping("/anonymous")
+    public String anonymous() { return "anonymous"; }
+
+    //누구든 접근 가능
+    @GetMapping("/authentication")
+    public String authentication(Authentication authentication) {
+        //from security context
+        if(authentication instanceof AnonymousAuthenticationToken) { //무조건 들어있음
+            return "anonymous";
+        }else{
+            return "not anonymous"; //UsernamePasswordAuthenticationToken or 구현객체
+        }
+    }
+
+    //누구든 접근 가능
+    //securityContext에서 추출 -> 가장 확실하고 안전.
+    @GetMapping("/anonymousContext")
+    //form security context
+    public String anonymousContext(@CurrentSecurityContext SecurityContext securityContext) {
+        return securityContext.getAuthentication().getName(); //guest
     }
 
 }
