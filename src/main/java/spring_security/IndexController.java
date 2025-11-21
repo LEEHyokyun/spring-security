@@ -22,8 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 * */
 @RestController
 public class IndexController {
+
     @GetMapping("/")
-    public String index() {
+    public String index(String customParam) {
+        if(customParam != null){
+            return "customPage";
+        }else{
+            return "index";
+        }
         /*
         * 최초) SecurityProperties가 생성하여 memory에 저장한 계정을 인증정보로 사용
         * - user / generated password
@@ -34,7 +40,7 @@ public class IndexController {
         * 폼로그인 및 httpBasic 방식을 통해 인증 진행
         * 인증 승인 후 http build 최종 진행
         * */
-        return "index";
+        //return "index";
     }
 
     @GetMapping("/home")

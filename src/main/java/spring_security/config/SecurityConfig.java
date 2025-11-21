@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
@@ -123,33 +125,62 @@ public class SecurityConfig {
 //    }
 
     //logout
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/logoutSuccess").permitAll()
+//                        .anyRequest().authenticated())
+//                //.csrf(csrf->csrf.disable()) csrf 기능 비활성화
+//                .formLogin(Customizer.withDefaults())
+//                .logout(logout -> logout
+//                        //.logoutUrl("/logout")
+//                        //.logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc", "POST")) //우선 적용
+//                        .logoutSuccessUrl("/logoutSuccess")
+//                        .logoutSuccessHandler((req, res, aut) -> {
+//                            //onLogoutSuccess
+//                            res.sendRedirect("/logoutSuccess"); //우선 적용
+//                        })
+//                        .deleteCookies("JSESSIONID", "remember-me")
+//                        .invalidateHttpSession(true) //http session
+//                        .clearAuthentication(true) //security context
+//                        .addLogoutHandler((req, res, aut)-> {
+//                            HttpSession session = req.getSession();
+//                            session.invalidate();
+//                            SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(null);
+//                            SecurityContextHolder.getContextHolderStrategy().clearContext();
+//                        })
+//                        .permitAll()
+//                );
+//
+//        return http.build();
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        //RequestCache / savedRequest는 Spring Security에 의해 자동 활용됨
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setMatchingRequestParameterName("customParam=y");  //이 쿼리스트링이 인증 성공 시 붙게된다.
         http
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/logoutSuccess").permitAll()
-                        .anyRequest().authenticated())
-                //.csrf(csrf->csrf.disable()) csrf 기능 비활성화
-                .formLogin(Customizer.withDefaults())
-                .logout(logout -> logout
-                        //.logoutUrl("/logout")
-                        //.logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc", "POST")) //우선 적용
-                        .logoutSuccessUrl("/logoutSuccess")
-                        .logoutSuccessHandler((req, res, aut) -> {
-                            //onLogoutSuccess
-                            res.sendRedirect("/logoutSuccess"); //우선 적용
+                        .anyRequest().authenticated()
+                )
+                //.formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .successHandler((request, response, authentication) -> {
+                            SavedRequest savedRequest = requestCache.getRequest(request, response);
+                            String redirectUrl = savedRequest.getRedirectUrl();
+                            response.sendRedirect(redirectUrl);
+                            /*
+                            * 인증성공 시 ?continue..
+                            *
+                            * */
                         })
-                        .deleteCookies("JSESSIONID", "remember-me")
-                        .invalidateHttpSession(true) //http session
-                        .clearAuthentication(true) //security context
-                        .addLogoutHandler((req, res, aut)-> {
-                            HttpSession session = req.getSession();
-                            session.invalidate();
-                            SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(null);
-                            SecurityContextHolder.getContextHolderStrategy().clearContext();
-                        })
-                        .permitAll()
-                );
+                )
+                //request cache 정보를 그대로 반영해주어야 한다.
+                .requestCache(cache -> cache.requestCache(requestCache))
+        ;
 
         return http.build();
     }
