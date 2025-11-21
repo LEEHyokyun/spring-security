@@ -26,7 +26,7 @@ public class IndexController {
     @GetMapping("/")
     public String index(String customParam) {
         if(customParam != null){
-            return "customPage";
+            return "customPage"; //login 성공시 reqeustCache에 의해 저장된 쿼리스트링이 그대로 적용됨
         }else{
             return "index";
         }
