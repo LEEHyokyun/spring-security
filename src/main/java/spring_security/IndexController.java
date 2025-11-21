@@ -69,4 +69,9 @@ public class IndexController {
         return securityContext.getAuthentication().getName(); //guest
     }
 
+    @GetMapping("/logoutSuccess")
+    public String logoutSuccess() {
+        return "logoutSuccess";
+    }
+
 }

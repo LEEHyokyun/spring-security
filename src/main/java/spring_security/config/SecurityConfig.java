@@ -3,12 +3,14 @@ package spring_security.config;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -96,24 +99,56 @@ public class SecurityConfig {
 //    }
 
     //anonymous
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(authorizeRequests ->
+//                        //authorizeRequests.anyRequest().authenticated()      //모든 요청은 인증을 필요로 한다.
+//                        authorizeRequests
+//                                .requestMatchers("/anonymous").hasRole("GUEST") //이 URL은 GUEST 역할이 필요하다.(role - guest = role_guest)
+//                                .requestMatchers("/anonymousContext", "/authentication").permitAll() //이 URL은 모든 사용자가 접근 가능하다.
+//                                .anyRequest().authenticated() //이외 나머지 요청은 인증이 필요하다.
+//                            )
+//                .formLogin(Customizer.withDefaults())
+//                /*
+//                * 인증되지 않은 사용자가 접근하면 SecurityContext에 익명 Authentication을 넣어라
+//                * */
+//                .anonymous(anonymous
+//                        -> anonymous
+//                        .principal("guest")
+//                        .authorities("ROLE_GUEST") //prefix
+//                );
+//
+//        return http.build();
+//    }
+
+    //logout
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorizeRequests ->
-                        //authorizeRequests.anyRequest().authenticated()      //모든 요청은 인증을 필요로 한다.
-                        authorizeRequests
-                                .requestMatchers("/anonymous").hasRole("GUEST") //이 URL은 GUEST 역할이 필요하다.(role - guest = role_guest)
-                                .requestMatchers("/anonymousContext", "/authentication").permitAll() //이 URL은 모든 사용자가 접근 가능하다.
-                                .anyRequest().authenticated() //이외 나머지 요청은 인증이 필요하다.
-                            )
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("/logoutSuccess").permitAll()
+                        .anyRequest().authenticated())
+                //.csrf(csrf->csrf.disable()) csrf 기능 비활성화
                 .formLogin(Customizer.withDefaults())
-                /*
-                * 인증되지 않은 사용자가 접근하면 SecurityContext에 익명 Authentication을 넣어라
-                * */
-                .anonymous(anonymous
-                        -> anonymous
-                        .principal("guest")
-                        .authorities("ROLE_GUEST") //prefix
+                .logout(logout -> logout
+                        //.logoutUrl("/logout")
+                        //.logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc", "POST")) //우선 적용
+                        .logoutSuccessUrl("/logoutSuccess")
+                        .logoutSuccessHandler((req, res, aut) -> {
+                            //onLogoutSuccess
+                            res.sendRedirect("/logoutSuccess"); //우선 적용
+                        })
+                        .deleteCookies("JSESSIONID", "remember-me")
+                        .invalidateHttpSession(true) //http session
+                        .clearAuthentication(true) //security context
+                        .addLogoutHandler((req, res, aut)-> {
+                            HttpSession session = req.getSession();
+                            session.invalidate();
+                            SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(null);
+                            SecurityContextHolder.getContextHolderStrategy().clearContext();
+                        })
+                        .permitAll()
                 );
 
         return http.build();
