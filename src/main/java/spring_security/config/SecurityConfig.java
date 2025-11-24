@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -19,10 +21,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import spring_security.customized.CustomAuthenticationFilter;
+import spring_security.customized.CustomAuthenticationProvider;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -31,17 +36,46 @@ import java.io.IOException;
 @Configuration
 public class SecurityConfig {
 
-    //formLogin basic
+    //formLogin basic1
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+//                //.formLogin(Customizer.withDefaults());  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
+//                .formLogin(Customizer.withDefaults())
+//
+//                ;
+//
+//        return http.build();
+//    }
+
+    //formLogin basic2
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults());  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
-                .formLogin(Customizer.withDefaults())
 
+        //providerManager by httpSecurity
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
+        //customizing ? authentication Manager / filter 별도 등록.
+        http
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("/", "/api/login").permitAll()
+                        .anyRequest().authenticated())
+                //.formLogin(Customizer.withDefaults())
+                .authenticationManager(authenticationManager)
+                .addFilterBefore(customAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 ;
 
+
+
         return http.build();
+    }
+
+    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
+        customAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        return customAuthenticationFilter;
     }
 
     //formLogin
@@ -217,4 +251,5 @@ public class SecurityConfig {
 //        services.setTokenValiditySeconds(3600);
 //        return services;
 //    }
+
 }
