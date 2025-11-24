@@ -49,7 +49,7 @@ public class SecurityConfig {
 //        return http.build();
 //    }
 
-    //formLogin basic2
+    //formLogin basic2 (providerManager by httpSecurity)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
