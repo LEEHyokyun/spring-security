@@ -30,6 +30,20 @@ import java.io.IOException;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+
+    //formLogin basic
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                //.formLogin(Customizer.withDefaults());  //client 요청에 대해 기본 인증방식으로 formLogin 방식을 설정
+                .formLogin(Customizer.withDefaults())
+
+                ;
+
+        return http.build();
+    }
+
     //formLogin
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -156,34 +170,34 @@ public class SecurityConfig {
 //        return http.build();
 //    }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //RequestCache / savedRequest는 Spring Security에 의해 자동 활용됨
-        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setMatchingRequestParameterName("customParam=y");  //이 쿼리스트링이 인증 성공 시 붙게된다.
-        http
-                .authorizeRequests(auth -> auth
-                        .requestMatchers("/logoutSuccess").permitAll()
-                        .anyRequest().authenticated()
-                )
-                //.formLogin(Customizer.withDefaults())
-                .formLogin(form -> form
-                        .successHandler((request, response, authentication) -> {
-                            SavedRequest savedRequest = requestCache.getRequest(request, response);
-                            String redirectUrl = savedRequest.getRedirectUrl();
-                            response.sendRedirect(redirectUrl);
-                            /*
-                            * 인증성공 시 ?continue..
-                            * 이것을 requestCache에서 설정한 쿼리스트링으로 변경 가능
-                            * */
-                        })
-                )
-                //request cache 정보를 그대로 반영해주어야 한다.
-                .requestCache(cache -> cache.requestCache(requestCache))
-        ;
-
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        //RequestCache / savedRequest는 Spring Security에 의해 자동 활용됨
+//        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+//        requestCache.setMatchingRequestParameterName("customParam=y");  //이 쿼리스트링이 인증 성공 시 붙게된다.
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/logoutSuccess").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                //.formLogin(Customizer.withDefaults())
+//                .formLogin(form -> form
+//                        .successHandler((request, response, authentication) -> {
+//                            SavedRequest savedRequest = requestCache.getRequest(request, response);
+//                            String redirectUrl = savedRequest.getRedirectUrl();
+//                            response.sendRedirect(redirectUrl);
+//                            /*
+//                            * 인증성공 시 ?continue..
+//                            * 이것을 requestCache에서 설정한 쿼리스트링으로 변경 가능
+//                            * */
+//                        })
+//                )
+//                //request cache 정보를 그대로 반영해주어야 한다.
+//                .requestCache(cache -> cache.requestCache(requestCache))
+//        ;
+//
+//        return http.build();
+//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
