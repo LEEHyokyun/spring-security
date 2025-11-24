@@ -6,7 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,6 +35,8 @@ import spring_security.customized.CustomAuthenticationProvider;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -50,31 +56,64 @@ public class SecurityConfig {
 //    }
 
     //formLogin basic2 (providerManager by httpSecurity)
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//        //providerManager by httpSecurity
+//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+//
+//        //customizing ? authentication Manager / filter 별도 등록.
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/", "/api/login").permitAll()
+//                        .anyRequest().authenticated())
+//                //.formLogin(Customizer.withDefaults())
+//                .authenticationManager(authenticationManager)
+//                .addFilterBefore(customAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
+//                ;
+//
+//
+//
+//        return http.build();
+//    }
+
+    //formLogin basic3 (직접 생성)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        //providerManager by httpSecurity
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-
-        //customizing ? authentication Manager / filter 별도 등록.
+        //customizing ? authentication Manager / filter / provider 모두 별도 등록.
         http
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/", "/api/login").permitAll()
                         .anyRequest().authenticated())
                 //.formLogin(Customizer.withDefaults())
-                .authenticationManager(authenticationManager)
-                .addFilterBefore(customAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
-                ;
+                .addFilterBefore(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class)
+        ;
 
 
 
         return http.build();
     }
 
-    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    //filter만 생성해줄 시
+//    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
+//        customAuthenticationFilter.setAuthenticationManager(authenticationManager);
+//        return customAuthenticationFilter;
+//    }
+
+    //provider 직접 생성 시
+    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http) throws Exception {
+        List<AuthenticationProvider> authenticationProviders = List.of(new DaoAuthenticationProvider()); //userDetail -- 기본!
+        ProviderManager providerManager = new ProviderManager(authenticationProviders);
+
+        List<AuthenticationProvider> childAuthenticationProviders = List.of(new AnonymousAuthenticationProvider("key"), new CustomAuthenticationProvider());
+        ProviderManager childProviderManager = new ProviderManager(childAuthenticationProviders, providerManager);
+
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
-        customAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        customAuthenticationFilter.setAuthenticationManager(childProviderManager);
+
         return customAuthenticationFilter;
     }
 
