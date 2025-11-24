@@ -174,7 +174,7 @@ public class SecurityConfig {
                             response.sendRedirect(redirectUrl);
                             /*
                             * 인증성공 시 ?continue..
-                            *
+                            * 이것을 requestCache에서 설정한 쿼리스트링으로 변경 가능
                             * */
                         })
                 )
