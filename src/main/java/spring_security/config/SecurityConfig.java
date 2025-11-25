@@ -384,10 +384,10 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user")
-                .password("{noop}1111")
-                .roles("USER")    //여기까지 다중 사용자 설정 가능
-                .build();
+//        UserDetails user = User.withUsername("user")
+//                .password("{noop}1111")
+//                .roles("USER")    //여기까지 다중 사용자 설정 가능
+//                .build();
 
         return new CustomizedUserDetailService();
     }
