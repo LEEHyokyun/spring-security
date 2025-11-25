@@ -33,7 +33,6 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import spring_security.customized.CustomizedUserDetailService;
-import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
