@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -30,8 +32,7 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import spring_security.customized.CustomizedAuthenticationProvider;
-import spring_security.customized.CustomizedAuthenticationProvider2;
+import spring_security.customized.CustomizedUserDetailService;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -41,7 +42,23 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+    
+    //UserDetailsService 주입
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        /*
+         * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
+         * */
+      http
+                .authorizeRequests(auth -> auth
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults())
+        ;
+
+        return http.build();
+    }
+    
     //formLogin basic1
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -118,28 +135,98 @@ public class SecurityConfig {
 //    }
 
     //customized provider 생성 : 직접 생성 시
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//        /*
+//        * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
+//        * */
+//        //way 1 ; 일반객체를 생성하여 그 객체를 주입해준다.
+////        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+////        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider());
+////        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider2());
+//
+//        //wat 2 ; 빈객체(=CustomizedAuthenticationProvider3)
+//
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
+//        ;
+//
+//        return http.build();
+//    }
 
-        /*
-        * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
-        * */
-        //way 1 ; 일반객체를 생성하여 그 객체를 주입해준다.
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider());
-        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider2());
+    //customized provider 생성 : Bean 생성 및 주입
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder builder, AuthenticationConfiguration configuration) throws Exception {
+//
+//        /*
+//         * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
+//         * */
+//        //way 1 ; 일반객체를 생성하여 그 객체를 주입해준다.
+//    //        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//    //        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider());
+//    //        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider2());
+//
+//        //way 2 ; 빈객체(=CustomizedAuthenticationProvider)
+//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        authenticationManagerBuilder.authenticationProvider(authenticationProvider()); //자식측에 customizd provider를 하나 더 추가
+//
+//        ProviderManager providerManager = (ProviderManager) configuration.getAuthenticationManager();
+//        providerManager.getProviders().remove(0); //기존 customized 제거
+//        builder.authenticationProvider(new DaoAuthenticationProvider()); //dao 추가
+//
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
+//        ;
+//
+//        return http.build();
+//    }
 
-        http
-                .authorizeRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
-        ;
+    //customized provider 생성 : Bean 생성 및 주입
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//        /*
+//         * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
+//         * */
+//
+//        //way 3 ; 빈객체(=CustomizedAuthenticationProvider) 2개 이상
+//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        authenticationManagerBuilder.authenticationProvider(authenticationProvider1()); //자식측에 customizd provider를 하나 더 추가
+//        authenticationManagerBuilder.authenticationProvider(authenticationProvider2());
+//
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults())
+//        ;
+//
+//        return http.build();
+//    }
 
+    //way2
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        return new CustomAuthenticationProvider();
+//    }
 
-
-        return http.build();
-    }
+    //way3(빈객체 2개이상)
+//    @Bean
+//    public AuthenticationProvider authenticationProvider1() {
+//        return new CustomAuthenticationProvider();
+//    }
+//
+//    @Bean
+//    public AuthenticationProvider authenticationProvider2() {
+//        return new CustomAuthenticationProvider();
+//    }
 
     //formLogin
 //    @Bean
@@ -303,7 +390,7 @@ public class SecurityConfig {
                 .roles("USER")    //여기까지 다중 사용자 설정 가능
                 .build();
 
-        return new InMemoryUserDetailsManager(user);
+        return new CustomizedUserDetailService();
     }
 
 //    @Bean
