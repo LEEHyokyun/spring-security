@@ -30,8 +30,8 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import spring_security.customized.CustomAuthenticationFilter;
-import spring_security.customized.CustomAuthenticationProvider;
+import spring_security.customized.CustomizedAuthenticationProvider;
+import spring_security.customized.CustomizedAuthenticationProvider2;
 import spring_security.entryPoint.CustomAuthenticationEntryPoint;
 
 import java.io.IOException;
@@ -79,22 +79,22 @@ public class SecurityConfig {
 //    }
 
     //formLogin basic3 (직접 생성)
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        //customizing ? authentication Manager / filter / provider 모두 별도 등록.
-        http
-                .authorizeRequests(auth -> auth
-                        .requestMatchers("/", "/api/login").permitAll()
-                        .anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults())
-                .addFilterBefore(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class)
-        ;
-
-
-
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//        //customizing ? authentication Manager / filter / provider 모두 별도 등록.
+//        http
+//                .authorizeRequests(auth -> auth
+//                        .requestMatchers("/", "/api/login").permitAll()
+//                        .anyRequest().authenticated())
+//                //.formLogin(Customizer.withDefaults())
+//                .addFilterBefore(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class)
+//        ;
+//
+//
+//
+//        return http.build();
+//    }
 
     //filter만 생성해줄 시
 //    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
@@ -104,17 +104,41 @@ public class SecurityConfig {
 //    }
 
     //provider 직접 생성 시
-    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http) throws Exception {
-        List<AuthenticationProvider> authenticationProviders = List.of(new DaoAuthenticationProvider()); //userDetail -- 기본!
-        ProviderManager providerManager = new ProviderManager(authenticationProviders);
+//    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http) throws Exception {
+//        List<AuthenticationProvider> authenticationProviders = List.of(new DaoAuthenticationProvider()); //userDetail -- 기본!
+//        ProviderManager providerManager = new ProviderManager(authenticationProviders);
+//
+//        List<AuthenticationProvider> childAuthenticationProviders = List.of(new AnonymousAuthenticationProvider("key"), new CustomAuthenticationProvider());
+//        ProviderManager childProviderManager = new ProviderManager(childAuthenticationProviders, providerManager);
+//
+//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
+//        customAuthenticationFilter.setAuthenticationManager(childProviderManager);
+//
+//        return customAuthenticationFilter;
+//    }
 
-        List<AuthenticationProvider> childAuthenticationProviders = List.of(new AnonymousAuthenticationProvider("key"), new CustomAuthenticationProvider());
-        ProviderManager childProviderManager = new ProviderManager(childAuthenticationProviders, providerManager);
+    //customized provider 생성 : 직접 생성 시
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
-        customAuthenticationFilter.setAuthenticationManager(childProviderManager);
+        /*
+        * 최초 : DaoAuthenticationProvider, AnonymousAuthenticationProvider
+        * */
+        //way 1 ; 일반객체를 생성하여 그 객체를 주입해준다.
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider());
+        authenticationManagerBuilder.authenticationProvider(new CustomizedAuthenticationProvider2());
 
-        return customAuthenticationFilter;
+        http
+                .authorizeRequests(auth -> auth
+                        .requestMatchers("/").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults())
+        ;
+
+
+
+        return http.build();
     }
 
     //formLogin
