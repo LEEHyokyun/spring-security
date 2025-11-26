@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -42,18 +43,22 @@ import java.util.List;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-      //customized filtering
-      AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-      AuthenticationManager authenticationManager = builder.build();
 
       http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+                //.formLogin(Customizer.withDefaults()) //servlet login -> formLogin 비활성화
+                        .csrf(AbstractHttpConfigurer::disable)//test를 위한 임시조치
         ;
 
         return http.build();
+    }
+
+    //authentication manager
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
