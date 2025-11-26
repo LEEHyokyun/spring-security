@@ -1,3 +1,13 @@
+## 유의사항
+
+일정 단게별로 초기화 후 재진행(멀티모듈로 구성하면 끝이 없어서 초기화 후 진행이 더 효율적임)
+
+실무적인 적용 범위/과정분석후 영향도 및 독립성 등을 고려해서 초기화 후 진행한다.
+(*특히 AuthenticationFIlter/Provider 등의 Customizing 부분 등에 맞춤)
+
+~ 2025.11.26 : 85bfcb7ae3ae5867c16fd7fabbd92a26258725fe 까지
+2025.11.26(*SecurityContext/SecurityContextHolderFilter) ~ : 
+
 ## 0. Duty
 
 FilterChain의 동작은

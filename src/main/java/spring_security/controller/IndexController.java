@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import spring_security.service.SecurityContextService;
 
 /*
 * TIP
@@ -27,35 +26,9 @@ import spring_security.service.SecurityContextService;
 @RequiredArgsConstructor
 public class IndexController {
 
-//    @GetMapping("/")
-//    public String index(String customParam) {
-//        if(customParam != null){
-//            return "customPage"; //login 성공시 reqeustCache에 의해 저장된 쿼리스트링이 그대로 적용됨
-//        }else{
-//            return "index";
-//        }
-//        /*
-//        * 최초) SecurityProperties가 생성하여 memory에 저장한 계정을 인증정보로 사용
-//        * - user / generated password
-//        * get request) SpringBootWebSecurityConfiguration에서 ConditionalOnDefaultWebSecurity의 조건이 참인 여부를 판단
-//        * DefaultWebSecurityCondition의 Class/Bean 조건의 참 여부를 판단하여
-//        * 최종 참 판단 시 SpringBootWebSecurityConfiguration의 defaultSecurityFilterChain을 최종 실행
-//        * 인증 및 인가여부를 확인하고
-//        * 폼로그인 및 httpBasic 방식을 통해 인증 진행
-//        * 인증 승인 후 http build 최종 진행
-//        * */
-//        //return "index";
-//    }
-    final SecurityContextService securityContextService;
 
     @GetMapping("/")
     public String index() {
-        //현재 인증상태
-        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        System.out.println("Controller authetication : " + authentication);
-
-        securityContextService.securityContext();
 
         return "index";
     }
