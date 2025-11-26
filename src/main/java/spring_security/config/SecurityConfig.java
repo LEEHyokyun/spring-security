@@ -32,6 +32,7 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import spring_security.customized.filter.CustomizedAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,18 +41,30 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      //customized filtering
+      AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+      AuthenticationManager authenticationManager = builder.build();
+
       http
                 .authorizeRequests(auth -> auth
+                        .requestMatchers("/api/login").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
+                .authenticationManager(authenticationManager)
+                .addFilterBefore(customizedAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
     }
 
+    public CustomizedAuthenticationFilter customizedAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        CustomizedAuthenticationFilter customizedAuthenticationFilter = new CustomizedAuthenticationFilter(http);
+        customizedAuthenticationFilter.setAuthenticationManager(authenticationManager);
+
+        return customizedAuthenticationFilter;
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
