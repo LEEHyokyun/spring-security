@@ -6,7 +6,7 @@
 (*특히 AuthenticationFIlter/Provider 등의 Customizing 부분 등에 맞춤)
 
 ~ 2025.11.26 : 85bfcb7ae3ae5867c16fd7fabbd92a26258725fe 까지
-2025.11.26(*SecurityContext/SecurityContextHolderFilter) ~ : 
+2025.11.26(*SecurityContext/SecurityContextHolderFilter) ~ : fe3aa6f2466a30a466730a6e1c549e0f323c1626부터 
 
 ## 0. Duty
 
