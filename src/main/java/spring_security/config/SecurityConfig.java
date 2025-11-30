@@ -46,19 +46,18 @@ public class SecurityConfig {
 
       http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/invalid").permitAll()
                         .anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults()) //servlet login -> formLogin 비활성화
-                        .csrf(AbstractHttpConfigurer::disable)//test를 위한 임시조치
+                .formLogin(Customizer.withDefaults())
+                .sessionManagement(session ->
+                        session
+                                .maximumSessions(1)
+                                .maxSessionsPreventsLogin(false)
+                                .expiredUrl("/expired")
+                )
         ;
 
         return http.build();
-    }
-
-    //authentication manager
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
     }
 
     @Bean
