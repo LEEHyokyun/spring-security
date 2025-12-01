@@ -13,6 +13,7 @@
 2025.12.01(*고정세션공격방지) : 128119eb4beec116f05db43383f069a50a5c45d7
 2025.12.01(*session생성정책) : 3a9737fc832d33785132d616fde92ed41a6472a9
 2025.12.01(*session information service) : f32203567214d5883a86e25870a95e1a3a2dea30
+2025.120.1(*authenticationException/accessDeniedException) : 55aaa01cea54e04bb16540a2825dd5ab0751421c
 
 ## 0. Duty
 
