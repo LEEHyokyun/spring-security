@@ -51,6 +51,8 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session
+                                .sessionFixation(sessionFixation ->
+                                        sessionFixation.changeSessionId())
                                 .maximumSessions(1)
                                 .maxSessionsPreventsLogin(false)
                                 .expiredUrl("/expired")
