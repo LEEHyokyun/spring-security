@@ -8,6 +8,12 @@
 2025.11.26(*SecurityContext/SecurityContextHolderFilter) : fe3aa6f2466a30a466730a6e1c549e0f323c1626부터 
 2025.11.26(*Spring MVC의 엔드포인트를 활용하여 인증구현(Servlet 기반)) : 8581629fe50dec7938d405d742ad93d0691577bb
 
+2025.11.30(*동시세션방지 정책) : 35799d83381f62f628d636a5db841d26deb770d3
+
+2025.12.01(*고정세션공격방지) : 128119eb4beec116f05db43383f069a50a5c45d7
+2025.12.01(*session생성정책) : 3a9737fc832d33785132d616fde92ed41a6472a9
+2025.12.01(*session information service) : f32203567214d5883a86e25870a95e1a3a2dea30
+
 ## 0. Duty
 
 FilterChain의 동작은
