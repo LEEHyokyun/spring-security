@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import spring_security.service.SessionInformService;
 
 /*
 * TIP
@@ -28,17 +27,9 @@ import spring_security.service.SessionInformService;
 @RequiredArgsConstructor
 public class IndexController {
 
-    private final SessionInformService sessionInformService;
-
     @GetMapping("/")
     public String index() {
         return "index";
-    }
-
-    @GetMapping("/sessionInfo")
-    public String sessionInfo(){
-        sessionInformService.sessionInform();
-        return "sessionInfo";
     }
 
     @GetMapping("/invalid")

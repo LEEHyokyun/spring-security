@@ -52,15 +52,6 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/invalid").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session
-                                .sessionFixation(sessionFixation ->
-                                        sessionFixation.changeSessionId())
-                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                                .maximumSessions(2)
-                                .maxSessionsPreventsLogin(false)
-                                .expiredUrl("/expired")
-                )
         ;
 
         return http.build();
