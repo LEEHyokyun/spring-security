@@ -16,6 +16,7 @@
 2025.12.01(*authenticationException/accessDeniedException) : 55aaa01cea54e04bb16540a2825dd5ab0751421c
 
 2025.12.02(CorsConfiguration) : 93692f4904d3b3af41636e88bfc538d51b510006
+2025.12.02(CSRF 적용) : d2cd253a87125a63bdc78fea3e7621ef31918837
 
 ## 0. Duty
 
