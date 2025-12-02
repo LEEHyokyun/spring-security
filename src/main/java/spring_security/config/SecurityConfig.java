@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,6 +41,9 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,31 +57,29 @@ public class SecurityConfig {
 
       http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/login", "/denied").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
-                .exceptionHandling(exception
-                        -> exception
-//                        .authenticationEntryPoint(new AuthenticationEntryPoint() {
-//                            @Override
-//                            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-//                                System.out.println("exception : " + authException.getMessage());
-//                                response.sendRedirect("/login");
-//                            }
-//                        })
-                        .accessDeniedHandler(new AccessDeniedHandler() {
-                            @Override
-                            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                                System.out.println("accessDenied : " + accessDeniedException.getMessage());
-                                response.sendRedirect("/denied");
-                            }
-                        })
-
-                )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         ;
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        //출처
+        configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedMethod(HttpMethod.GET);
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); //1H
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); //모든 경로에 대해 cors 적용
+
+        return source;
     }
 
     @Bean
