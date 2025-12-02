@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
@@ -84,4 +85,9 @@ public class IndexController {
         return "logoutSuccess";
     }
 
+    //csrf
+    @PostMapping("/csrf")
+    public String csrf() {
+        return "csrf is applied";
+    }
 }

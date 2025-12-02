@@ -57,29 +57,13 @@ public class SecurityConfig {
 
       http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/csrf").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
                         .anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/csrf"))
                 .formLogin(Customizer.withDefaults())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         ;
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        //출처
-        configuration.addAllowedOrigin("http://localhost:8080");
-        configuration.addAllowedMethod(HttpMethod.GET);
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); //1H
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); //모든 경로에 대해 cors 적용
-
-        return source;
     }
 
     @Bean
