@@ -19,6 +19,8 @@
 2025.12.02(CSRF 적용) : d2cd253a87125a63bdc78fea3e7621ef31918837
 
 2025.12.03(CSRF token을 Servlet Request로 부터 추출) : da78b1a62cdc1207a22f961119d58db4ccdcbc9c
+2025.12.03(java script 적용 - post 요청 시 토큰 포함) : d13e922fdd8bc020304ae5041dee79b56e2f79ef
+2025.12.03(java script 적용 - withHttpOnlyFalse + csrf token handler) : 94d8c21a72e484a7034b4b6e562789a6eb8f5cd9
 
 ## 0. Duty
 
