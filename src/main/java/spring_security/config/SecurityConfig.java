@@ -46,8 +46,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import spring_security.csrfHandler.SpaCsrfTokenRequestHandler;
-import spring_security.filter.CsrfCookieFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,18 +57,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
-
-      http
+     http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/login", "/formx", "/formCsrf").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
+                        .requestMatchers("/login").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
                         .anyRequest().authenticated())
-                        .csrf(csrf ->
-                                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                                        .csrfTokenRequestHandler(csrfTokenRequestHandler)
-
-                        )
-                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())
         ;
 
