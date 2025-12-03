@@ -18,6 +18,8 @@
 2025.12.02(CorsConfiguration) : 93692f4904d3b3af41636e88bfc538d51b510006
 2025.12.02(CSRF 적용) : d2cd253a87125a63bdc78fea3e7621ef31918837
 
+2025.12.03(CSRF token을 Servlet Request로 부터 추출) : da78b1a62cdc1207a22f961119d58db4ccdcbc9c
+
 ## 0. Duty
 
 FilterChain의 동작은
