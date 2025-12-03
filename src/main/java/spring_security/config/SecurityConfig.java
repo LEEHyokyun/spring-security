@@ -59,7 +59,6 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/login", "/csrf").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
                         .anyRequest().authenticated())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/csrf"))
                 .formLogin(Customizer.withDefaults())
         ;
 
