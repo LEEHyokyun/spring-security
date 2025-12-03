@@ -100,4 +100,9 @@ public class IndexController {
 
         return tokenByClass.getToken() + " : " + tokenByAttribute.getToken();
     }
+
+    @PostMapping("/formCsrf")
+    public CsrfToken formCsrf(CsrfToken token) {
+        return token;
+    }
 }
