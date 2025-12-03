@@ -38,12 +38,16 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import spring_security.csrfHandler.SpaCsrfTokenRequestHandler;
+import spring_security.filter.CsrfCookieFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,11 +59,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
+
       http
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/login", "/formx", "/formCsrf").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
                         .anyRequest().authenticated())
-                        .csrf(Customizer.withDefaults())
+                        .csrf(csrf ->
+                                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                        .csrfTokenRequestHandler(csrfTokenRequestHandler)
+
+                        )
+                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())
         ;
 
