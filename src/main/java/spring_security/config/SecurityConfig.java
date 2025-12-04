@@ -8,6 +8,7 @@ import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
@@ -62,8 +63,11 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+    /*
+    * 다중 필터 적용
+    * */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
+    public SecurityFilterChain securityFilterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth
@@ -74,6 +78,21 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain securityFilterChain2(HttpSecurity http, ApplicationContext context) throws Exception {
+
+        http
+                .securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/oauth/**"))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll() //for comparison
+                )
+        ;
+
+        return http.build();
+    }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
