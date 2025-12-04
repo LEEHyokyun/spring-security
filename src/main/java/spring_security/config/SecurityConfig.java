@@ -69,7 +69,7 @@ public class SecurityConfig {
     * 다중 필터 적용
     * */
     @Bean
-    public SecurityFilterChain securityFilterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth

@@ -28,7 +28,8 @@
 2025.12.04(WebExpressionAuthorizationManager/Bean) : e61c770d140070bad602a7d6116a818968b591be
 2025.12.04(customized RequestMatchers) : 5726a9dd041bdd022ee4fe77125eaf8745349477
 2025.12.04(다중 security filter chain 구성 및 security Matchers 적용) : ef1e3d69d6837539e8c9bb049cfe604524bee5fc
-
+2025.12.04(EnableMethodSecurity + postAuthorize/preAuthorize) : 03f98b7e8aab07eee50f4eff26a7e6bb2aa5bb7d
+2025.12.04(EnableMethodSecurity + postFilter/preFilter) : e32868e1b4be8cf5d16b7e20aaa3fa33788cf74c
 
 ## 0. Duty
 
