@@ -65,15 +65,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
 
-        DefaultHttpSecurityExpressionHandler expressionHandler = new DefaultHttpSecurityExpressionHandler();
-        expressionHandler.setApplicationContext(context);
-
-        WebExpressionAuthorizationManager webExpressionAuthorizationManager = new WebExpressionAuthorizationManager("@customWebSecurity.check(authentication, request)");
-        webExpressionAuthorizationManager.setExpressionHandler(expressionHandler);
-
-     http
+        http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/custom/**").access(webExpressionAuthorizationManager)
+                        .requestMatchers(new CustomizedRequestMatcher("/admin")).hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
              .formLogin(Customizer.withDefaults())
