@@ -42,10 +42,14 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,24 +59,32 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 
      http
-                .authorizeRequests(auth -> auth
-                        .requestMatchers("/login").permitAll() //기본상태 = csrf 활성화, 로그인 요청을 시도하도록 유도.
-                        .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
-        ;
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/myPage/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST).hasAuthority("ROLE_WRITE")
+                        .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAuthority("ROLE_MANAGER")
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/admin/payment")).hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/admin/**").hasAnyAuthority("ROLD_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers(new RegexRequestMatcher("/resource/[A-Za-z0-9]", null)).hasAuthority("ROLE_MANAGER")
+                        .anyRequest().authenticated() //위에서 설정한 이외 모든 요청은 기본인증을 필요로 한다.
+                )
+             .formLogin(Customizer.withDefaults())
+             .csrf(AbstractHttpConfigurer::disable
+             );
 
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user")
-                .password("{noop}1111")
-                .roles("USER")    //여기까지 다중 사용자 설정 가능
-                .build();
+        UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();   //여기까지 다중 사용자 설정 가능
+        UserDetails manager = User.withUsername("manager").password("{noop}1111").roles("MANAGER").build();
+        UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "WRITE").build();
 
         return new InMemoryUserDetailsManager(user);
     }
