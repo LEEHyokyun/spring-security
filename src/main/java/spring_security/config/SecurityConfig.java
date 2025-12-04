@@ -63,7 +63,7 @@ import java.util.List;
 
 @EnableWebSecurity
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity  //security for method
 public class SecurityConfig {
     /*
     * 다중 필터 적용
