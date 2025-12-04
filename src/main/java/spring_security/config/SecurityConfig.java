@@ -33,6 +33,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -63,19 +64,16 @@ public class SecurityConfig {
 
      http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/user").hasAuthority("ROLE_USER")
-                        .requestMatchers("/myPage/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST).hasAuthority("ROLE_WRITE")
-                        .requestMatchers(new AntPathRequestMatcher("/manager/**")).hasAuthority("ROLE_MANAGER")
-                        .requestMatchers(new MvcRequestMatcher(introspector, "/admin/payment")).hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/admin/**").hasAnyAuthority("ROLD_ADMIN", "ROLE_MANAGER")
-                        .requestMatchers(new RegexRequestMatcher("/resource/[A-Za-z0-9]", null)).hasAuthority("ROLE_MANAGER")
-                        .anyRequest().authenticated() //위에서 설정한 이외 모든 요청은 기본인증을 필요로 한다.
+                        .requestMatchers("/user/{name}")
+                        .access(new WebExpressionAuthorizationManager("#name == authentication.name"))
+
+                        .requestMatchers("/admin/db")
+                        .access(new WebExpressionAuthorizationManager("hasAuthority('ROLE_DB') or hasAuthority('ROLE_ADMIN') "))
+
+                        .anyRequest().authenticated()
                 )
              .formLogin(Customizer.withDefaults())
-             .csrf(AbstractHttpConfigurer::disable
-             );
+            ;
 
         return http.build();
     }
