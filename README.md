@@ -23,6 +23,11 @@
 2025.12.03(java script 적용 - withHttpOnlyFalse + csrf token handler) : 94d8c21a72e484a7034b4b6e562789a6eb8f5cd9
 2025.12.03(same site) : 0897c10e5321c0bd77cb9712cdb9748c5f57c061
 
+2025.12.04(requestMatchers API) : d416ef7a9cd13eaf1674f46a561cbe417b520a34
+2025.12.04(WebExpressionAuthorizationManager) : a9266a552455cdd8274ea07c8fa554fd5f89c836
+2025.12.04(WebExpressionAuthorizationManager/Bean) : e61c770d140070bad602a7d6116a818968b591be
+2025.12.04(customized RequestMatchers) : 5726a9dd041bdd022ee4fe77125eaf8745349477
+
 ## 0. Duty
 
 FilterChain의 동작은
