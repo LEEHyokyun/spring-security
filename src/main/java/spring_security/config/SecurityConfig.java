@@ -81,20 +81,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain securityFilterChain2(HttpSecurity http, ApplicationContext context) throws Exception {
-
-        http
-                .securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/oauth/**"))
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() //for comparison
-                )
-        ;
-
-        return http.build();
-    }
-
 
     @Bean
     public UserDetailsService userDetailsService() {
