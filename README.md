@@ -34,6 +34,7 @@
 2025.12.05(빈객체 활용) : 041e83604490bc5f5119c93fa8f1bd1d883597bd
 2025.12.05(정적자원요청에 대한 보안예외 - WebSecurityCustomizer) : e082c7c06ee5f86be75b69c86196bdff43ac5f89
 2025.12.05(정적자원요청에 대한 보안예외 - permitAll) : 409cc13e20478bcc35d3b34f4c583365a12807b0
+2025.12.05(계층권한구조 - RoleHierarhcy) : 0a1b5a5b39d14b97e2a4278ab9db9a59d4a2b1f1
 
 ## 0. Duty
 

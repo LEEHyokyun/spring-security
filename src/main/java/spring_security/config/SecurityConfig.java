@@ -85,14 +85,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
-
-        return roleHierarchy;
-    }
-
-    @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();   //여기까지 다중 사용자 설정 가능
         UserDetails manager = User.withUsername("manager").password("{noop}1111").roles("MANAGER").build();
