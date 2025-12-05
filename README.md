@@ -2,8 +2,6 @@
 
 일정 단게별로 초기화 후 재진행(멀티모듈로 구성하면 끝이 없어서 초기화 후 진행이 더 효율적임)
 
-실무적으로 적용가능할 정도로 내용을 분리할 필요가 있을때 초기화 후 재정리 진행.
-
 ~ 2025.11.26 : 85bfcb7ae3ae5867c16fd7fabbd92a26258725fe 까지
 2025.11.26(*SecurityContext/SecurityContextHolderFilter) : fe3aa6f2466a30a466730a6e1c549e0f323c1626부터 
 2025.11.26(*Spring MVC의 엔드포인트를 활용하여 인증구현(Servlet 기반)) : 8581629fe50dec7938d405d742ad93d0691577bb
