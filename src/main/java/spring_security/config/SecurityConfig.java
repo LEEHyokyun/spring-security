@@ -69,17 +69,11 @@ import java.util.List;
 @EnableMethodSecurity//security for method
 public class SecurityConfig {
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer(){
-//        return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated() //secured/jsr보다 더 우선순위
                 )
              .formLogin(Customizer.withDefaults())
