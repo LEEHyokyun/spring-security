@@ -73,7 +73,8 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()  //secured/jsr보다 더 우선순위
                 )
              .formLogin(Customizer.withDefaults())
             ;
