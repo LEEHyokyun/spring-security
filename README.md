@@ -31,6 +31,10 @@
 2025.12.04(EnableMethodSecurity + postAuthorize/preAuthorize) : 03f98b7e8aab07eee50f4eff26a7e6bb2aa5bb7d
 2025.12.04(EnableMethodSecurity + postFilter/preFilter) : e32868e1b4be8cf5d16b7e20aaa3fa33788cf74c
 
+2025.12.05(Secured/JSR-250 *요청기반(anyRequest.authenticated)이 있다면 더 우선순위 적용 유의) : d4d7e84f9616e5ba7733544fa312f6f1300511ed, 3174b27f520a9ac367152e0a21c72c5e99cfb76d
+2025.12.05(cutomized 어노테이션) : 9f154108f28317f72e856ac01398f67e509f8e01
+2025.12.05(빈객체 활용) : 041e83604490bc5f5119c93fa8f1bd1d883597bd
+
 ## 0. Duty
 
 FilterChain의 동작은
