@@ -63,7 +63,7 @@ import java.util.List;
 
 @EnableWebSecurity
 @Configuration
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)  //security for method
+@EnableMethodSecurity//security for method
 public class SecurityConfig {
 
     @Bean
