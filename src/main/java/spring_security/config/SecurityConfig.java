@@ -65,9 +65,7 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)  //security for method
 public class SecurityConfig {
-    /*
-    * 다중 필터 적용
-    * */
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
 
