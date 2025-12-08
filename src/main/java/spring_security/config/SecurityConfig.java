@@ -61,6 +61,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import spring_security.authorization.CustomizedAuthorizationManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api").access(new CustomizedAuthorizationManager())
                         .anyRequest().authenticated() //secured/jsr보다 더 우선순위
                 )
              .formLogin(Customizer.withDefaults())
