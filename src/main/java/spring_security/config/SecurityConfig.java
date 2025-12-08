@@ -68,7 +68,6 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-import spring_security.manager.CustomizedRequestMatcherDelegatingAuthorizationManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,28 +89,6 @@ public class SecurityConfig {
             ;
 
         return http.build();
-    }
-
-    @Bean
-    public AuthorizationManager<RequestAuthorizationContext> authorizationManager(HandlerMappingIntrospector introspector) {
-        List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings = new ArrayList<>();
-
-        RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>> requestMatcherEntry1
-                = new RequestMatcherEntry<>(new MvcRequestMatcher(introspector, "/user"), AuthorityAuthorizationManager.hasAuthority("ROLE_USER"));
-        RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>> requestMatcherEntry2
-                = new RequestMatcherEntry<>(new MvcRequestMatcher(introspector, "/api"), AuthorityAuthorizationManager.hasAuthority("ROLE_API"));
-        RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>> requestMatcherEntry3
-                = new RequestMatcherEntry<>(new MvcRequestMatcher(introspector, "/admin"), AuthorityAuthorizationManager.hasAuthority("ROLE_ADMIN"));
-        RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>> requestMatcherEntry4
-                = new RequestMatcherEntry<>(AnyRequestMatcher.INSTANCE, new AuthenticatedAuthorizationManager<>()); //anyRequest / authenticated
-
-        mappings.add(requestMatcherEntry1);
-        mappings.add(requestMatcherEntry2);
-        mappings.add(requestMatcherEntry3);
-        mappings.add(requestMatcherEntry4);
-
-        return new CustomizedRequestMatcherDelegatingAuthorizationManager(mappings);
-
     }
 
     @Bean
