@@ -77,7 +77,6 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api").access(new CustomizedAuthorizationManager())
                         .anyRequest().authenticated() //secured/jsr보다 더 우선순위
                 )
              .formLogin(Customizer.withDefaults())
