@@ -75,8 +75,13 @@ import java.util.List;
 
 @EnableWebSecurity
 @Configuration
-@EnableMethodSecurity//security for method
 public class SecurityConfig {
+
+    //정적자원접근 허용
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
