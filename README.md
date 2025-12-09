@@ -39,6 +39,8 @@
 2025.12.08(Customized Authorization Manager) : 2e43b6c44844f8e999c7876b2c3c4e09603b7400
 2025.12.08(Customized Request Matcher Delegating Authorization Manager) : 2c9aa1e0a73a066f43acf55ba84646dea0f1db15
 
+2025.12.09(Customized Pre/Post Authorize advice) : 4ead4769bff0ce626ccaba254c6521ea3fd45908
+
 ## 0. Duty
 
 FilterChain의 동작은
