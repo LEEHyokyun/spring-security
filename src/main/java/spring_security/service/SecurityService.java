@@ -7,12 +7,11 @@ import spring_security.VO.Account;
 
 @Service
 public class SecurityService {
-    @PreAuthorize(value = "''")
+
     public String getUser(){
         return "user";
     }
 
-    @PostAuthorize(value = "''")
     public Account getOwner(String name){
         return new Account(name, false);
     }
