@@ -18,6 +18,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authorization.*;
 import org.springframework.security.config.Customizer;
@@ -66,12 +67,17 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import spring_security.event.CustomizedAuthenticationFailureEvent;
 import spring_security.event.CustomizedAuthenticationSuccessEvent;
+import spring_security.event.DefaultAuthenticationFailureEvent;
+import spring_security.exception.CustomizedException;
 import spring_security.manager.CustomizedAuthenticationProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @EnableWebSecurity
 @Configuration
@@ -116,6 +122,19 @@ public class SecurityConfig {
     }
 
     @Bean
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+
+        Map<Class<? extends AuthenticationException>, Class<? extends AbstractAuthenticationFailureEvent>> mapping =
+                Collections.singletonMap(CustomizedException.class, CustomizedAuthenticationFailureEvent.class);
+
+        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+        authenticationEventPublisher.setAdditionalExceptionMappings(mapping);
+        authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class); //default
+
+        return authenticationEventPublisher;
+    }
+
+    @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();   //여기까지 다중 사용자 설정 가능
         UserDetails manager = User.withUsername("manager").password("{noop}1111").roles("MANAGER").build();
@@ -123,11 +142,4 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(user, manager, admin);
     }
-
-    @Bean
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
-        return authenticationEventPublisher;
-    }
-
 }
