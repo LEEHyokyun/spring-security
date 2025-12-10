@@ -72,6 +72,7 @@ import spring_security.event.CustomizedAuthenticationSuccessEvent;
 import spring_security.event.DefaultAuthenticationFailureEvent;
 import spring_security.exception.CustomizedException;
 import spring_security.manager.CustomizedAuthenticationProvider;
+import spring_security.publisher.CustomizedAuthorizationEventPublisher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,6 +133,18 @@ public class SecurityConfig {
         authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class); //default
 
         return authenticationEventPublisher;
+    }
+
+    //basic
+    /*@Bean
+    public AuthorizationEventPublisher authorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        return new SpringAuthorizationEventPublisher(applicationEventPublisher);
+    }*/
+
+    //Customized
+    @Bean
+    public AuthorizationEventPublisher myAuthorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher){
+        return new CustomizedAuthorizationEventPublisher(new SpringAuthorizationEventPublisher(applicationEventPublisher), applicationEventPublisher);
     }
 
     @Bean
