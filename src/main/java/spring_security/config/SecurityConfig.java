@@ -103,10 +103,16 @@ public class SecurityConfig {
                         response.sendRedirect("/");
                     }
                 }))
+                .authenticationProvider(authenticationProvider())
                 .csrf(AbstractHttpConfigurer::disable)
         ;
 
         return http.build();
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        return new CustomizedAuthenticationProvider(applicationEventPublisher);
     }
 
     @Bean
