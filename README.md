@@ -43,11 +43,16 @@
 2025.12.09(single/multiple customized pointcut) : f09b3fc2ce756c80aabeccacfd8070e30ed356cf
 2025.12.09(Customized Advisor/AOP/Interceptor/advice/pointcut) : f5da0b9bc94444db55c5cc504cca0d332906e514
 
-2025.12.10(Event Publisher(기본/Customized)) : 
+2025.12.10(Event Publisher(기본/Customized)) :
+
+[인증]
 - 4371e2a2379f91d439cd2acb79a8a72dd30b7f0d
 - 35f4e4cf35278cb30616f62aca019e3a74514fe8
 - dcc9753cccf90e7abef28551c815fb827a859449
 - ebb19cfc09294a16f137960c3425aa4d1b1c96ad
+
+[인가]
+- 7464a7cdf9cda29600fd859731da69903dad1e7a
 
 ## 0. Duty
 
