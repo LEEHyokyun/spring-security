@@ -124,10 +124,10 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user, manager, admin);
     }
 
-//    @Bean
-//    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-//        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
-//        return authenticationEventPublisher;
-//    }
+    @Bean
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+        return authenticationEventPublisher;
+    }
 
 }
