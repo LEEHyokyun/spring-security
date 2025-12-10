@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -14,14 +15,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.authentication.AnonymousAuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
-import org.springframework.security.authorization.AuthorityAuthorizationManager;
-import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.*;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -88,10 +84,15 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/db").hasAuthority("ROLE_DB")
+                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated() //secured/jsr보다 더 우선순위
                 )
-             .formLogin(Customizer.withDefaults())
-            ;
+                .formLogin(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+        ;
 
         return http.build();
     }
@@ -102,7 +103,12 @@ public class SecurityConfig {
         UserDetails manager = User.withUsername("manager").password("{noop}1111").roles("MANAGER").build();
         UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "WRITE").build();
 
-        return new InMemoryUserDetailsManager(user);
+        return new InMemoryUserDetailsManager(user, manager, admin);
     }
 
+//    @Bean
+//    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+//        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+//        return authenticationEventPublisher;
+//    }
 }
