@@ -54,6 +54,8 @@
 [인가]
 - 7464a7cdf9cda29600fd859731da69903dad1e7a
 
+2025.12.11(Servlet기반(프로그래밍 based) 인증처리) : 0decdc4b847e06b6af713d675a0034bdd0847be9
+
 ## 0. Duty
 
 FilterChain의 동작은
