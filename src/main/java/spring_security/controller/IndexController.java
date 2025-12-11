@@ -6,10 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +46,16 @@ public class IndexController {
     public String login(HttpServletRequest request, Member member) throws ServletException {
         request.login(member.getUsername(), member.getPassword());
         return "login";
+    }
+
+    @GetMapping("/principal1")
+    public User principal(@AuthenticationPrincipal User user) {
+        return user;
+    }
+
+    @GetMapping("/principal2")
+    public String principal(@AuthenticationPrincipal(expression = "username") String user) {
+        return user;
     }
 
     @GetMapping("/servlet")

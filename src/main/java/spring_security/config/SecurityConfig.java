@@ -98,7 +98,7 @@ public class SecurityConfig {
                         //.anyRequest().authenticated() //secured/jsr보다 더 우선순위
                         .anyRequest().permitAll()
                 )
-                //.formLogin(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
         ;
 
