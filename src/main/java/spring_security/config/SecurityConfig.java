@@ -67,12 +67,6 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-import spring_security.event.CustomizedAuthenticationFailureEvent;
-import spring_security.event.CustomizedAuthenticationSuccessEvent;
-import spring_security.event.DefaultAuthenticationFailureEvent;
-import spring_security.exception.CustomizedException;
-import spring_security.manager.CustomizedAuthenticationProvider;
-import spring_security.publisher.CustomizedAuthorizationEventPublisher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,52 +93,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user").hasAuthority("ROLE_USER")
-                        .requestMatchers("/db").hasAuthority("ROLE_DB")
-                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/manager").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN", "ROLE_WRITE")
                         .anyRequest().authenticated() //secured/jsr보다 더 우선순위
                 )
-                .formLogin(form -> form.successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        applicationEventPublisher.publishEvent(new CustomizedAuthenticationSuccessEvent(authentication));
-                        response.sendRedirect("/");
-                    }
-                }))
-                .authenticationProvider(authenticationProvider())
+                .formLogin(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
         ;
 
         return http.build();
-    }
-
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        return new CustomizedAuthenticationProvider(applicationEventPublisher);
-    }
-
-    @Bean
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-
-        Map<Class<? extends AuthenticationException>, Class<? extends AbstractAuthenticationFailureEvent>> mapping =
-                Collections.singletonMap(CustomizedException.class, CustomizedAuthenticationFailureEvent.class);
-
-        DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
-        authenticationEventPublisher.setAdditionalExceptionMappings(mapping);
-        authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class); //default
-
-        return authenticationEventPublisher;
-    }
-
-    //basic
-    /*@Bean
-    public AuthorizationEventPublisher authorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        return new SpringAuthorizationEventPublisher(applicationEventPublisher);
-    }*/
-
-    //Customized
-    @Bean
-    public AuthorizationEventPublisher myAuthorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher){
-        return new CustomizedAuthorizationEventPublisher(new SpringAuthorizationEventPublisher(applicationEventPublisher), applicationEventPublisher);
     }
 
     @Bean
