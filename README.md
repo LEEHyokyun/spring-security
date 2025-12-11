@@ -55,6 +55,7 @@
 - 7464a7cdf9cda29600fd859731da69903dad1e7a
 
 2025.12.11(Servlet기반(프로그래밍 based) 인증처리) : 0decdc4b847e06b6af713d675a0034bdd0847be9
+2025.12.11(authenticationPrincipal) : 3406822e201ba2d833a708d20d925f39d8b09403
 
 ## 0. Duty
 
