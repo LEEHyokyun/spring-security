@@ -1,6 +1,8 @@
 package spring_security.controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +14,9 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import spring_security.VO.Member;
+
+import java.io.IOException;
 
 /*
 * TIP
@@ -36,8 +41,20 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletRequest request, Member member) throws ServletException {
+        request.login(member.getUsername(), member.getPassword());
         return "login";
+    }
+
+    @GetMapping("/servlet")
+    public String users(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean isAuthenticated = request.authenticate(response);
+
+        if(isAuthenticated){
+            return "authenticated";
+        }
+
+        return "not authenticated";
     }
 
     @GetMapping("/denied")
