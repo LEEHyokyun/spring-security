@@ -57,6 +57,8 @@
 2025.12.11(Servlet기반(프로그래밍 based) 인증처리) : 0decdc4b847e06b6af713d675a0034bdd0847be9
 2025.12.11(authenticationPrincipal) : 3406822e201ba2d833a708d20d925f39d8b09403
 
+2025.12.12(Customized http configurer (CustomDsls)) : 079f575affa7af9f6d725ba75ef1422a9e3530fa
+
 ## 0. Duty
 
 FilterChain의 동작은
