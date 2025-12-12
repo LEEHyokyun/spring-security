@@ -95,10 +95,10 @@ public class SecurityConfig {
                         .requestMatchers("/user").hasAuthority("ROLE_USER")
                         .requestMatchers("/manager").hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/admin").hasAnyAuthority("ROLE_ADMIN", "ROLE_WRITE")
-                        //.anyRequest().authenticated() //secured/jsr보다 더 우선순위
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
+                .with(CustomizedHttpConfigurer.create(), dsl -> dsl.setFlag(true))
                 .csrf(AbstractHttpConfigurer::disable)
         ;
 
